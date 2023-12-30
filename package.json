@@ -25,5 +25,5 @@
     "eslint": "^8",
     "eslint-config-next": "14.0.4"
   },
-  "license":"LGPL-3.0-or-later"
+  "license": "LGPL-3.0-or-later"
 }

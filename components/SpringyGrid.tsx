@@ -1,5 +1,18 @@
 import dynamic from 'next/dynamic';
-import React, { useCallback, useEffect, useRef, useState, VFC } from 'react';
+import React, { useState, VFC } from 'react';
+import p5 from 'p5';
+
+
+interface DotProps {
+    x: number;
+    y: number;
+    x0: number;
+    y0: number;
+    vx: number;
+    vy: number;
+  }
+
+  
 
 // Next.js does not support SSR for packages that require window, so dynamic import is used to disable SSR.
 const Sketch = dynamic(() => import('react-p5'), {
@@ -21,38 +34,49 @@ const LINE_COLOR = '#FFFFFF'; // White lines
 const LINE_OPACITY = 125; // Opacity from 0 (transparent) to 255 (opaque)
 const LINE_WEIGHT = 2; // Thickness of the line
 
-class Dot {
-  constructor(p5: any[], i: number, j: number, width: number, height: number) {
-    this.vx = 0;
-    this.vy = 0;
-    this.x = p5.map(i, 0, N-1, SP, width-SP);
-    this.y = p5.map(j, 0, N-1, SP, height-SP);
-    this.x0 = this.x;
-    this.y0 = this.y;
-  }
-
-  update(p5, mouseX, mouseY, mouseIsPressed) {
-    let d = p5.dist(mouseX, mouseY, this.x, this.y);
-    let intensity = KClick * Math.exp(-d * d / (DELTA * DELTA));
-
-    let res = p5.createVector(0, 0);
-    if (mouseIsPressed) {
-      res.add(springForce(mouseX, mouseY, this.x, this.y, intensity, p5));
+class Dot implements DotProps {
+    x: number;
+    y: number;
+    x0: number;
+    y0: number;
+    vx: number;
+    vy: number;
+  
+    constructor(x: number, y: number) {
+      this.vx = 0;
+      this.vy = 0;
+      this.x = x;
+      this.y = y;
+      this.x0 = x;
+      this.y0 = y;
     }
-    res.add(springForce(this.x0, this.y0, this.x, this.y, KGrid, p5));
 
-    this.vx += DT * res.x;
-    this.vy += DT * res.y;
-
-    this.vx *= DAMPING;
-    this.vy *= DAMPING;
-
-    this.x += DT * this.vx;
-    this.y += DT * this.vy;
+  
+    update(p5: p5, mouseX: number, mouseY: number, mouseIsPressed: boolean) {
+      let d = p5.dist(mouseX, mouseY, this.x, this.y);
+      let intensity = KClick * Math.exp(-d * d / (DELTA * DELTA));
+  
+      let res = p5.createVector(0, 0);
+      if (mouseIsPressed) {
+        const force = springForce(mouseX, mouseY, this.x, this.y, intensity, p5);
+        
+        res.add(force);
+      }
+      const gridForce = springForce(this.x0, this.y0, this.x, this.y, KGrid, p5);
+      res.add(gridForce);
+  
+      this.vx += DT * res.x;
+      this.vy += DT * res.y;
+  
+      this.vx *= DAMPING;
+      this.vy *= DAMPING;
+  
+      this.x += DT * this.vx;
+      this.y += DT * this.vy;
+    }
   }
-}
 
-const springForce = (ax, ay, bx, by, k, p5) => {
+const springForce = (ax: number, ay: number, bx: number, by: number, k: number, p5: p5) => {
   let xx = ax - bx;
   let yy = ay - by;
   
@@ -67,23 +91,23 @@ const springForce = (ax, ay, bx, by, k, p5) => {
 };
 
 const SpringyGrid: VFC = () => {
-  const [array, setArray] = useState([]);
+    const [array, setArray] = useState<Dot[][]>([]);
+  
+    const setup = (p5: p5, canvasParentRef: Element) => {
+      p5.createCanvas(p5.windowWidth, p5.windowHeight).parent(canvasParentRef);
+  
+      const arr = new Array(N).fill(null).map((_, i) => 
+        new Array(N).fill(null).map((_, j) => {
+          const x = p5.map(i, 0, N-1, SP, p5.windowWidth - SP);
+          const y = p5.map(j, 0, N-1, SP, p5.windowHeight - SP);
+          return new Dot(x, y);
+        })
+      );
+  
+      setArray(arr);
+    };
 
-  const setup = (p5, canvasParentRef) => {
-    p5.createCanvas(p5.windowWidth, p5.windowHeight).parent(canvasParentRef);
-    console.log('Canvas size:', p5.windowWidth, p5.windowHeight);
-    p5.background(BACKGROUND_COLOR);
-
-    const arr = new Array(N).fill(null).map((_, i) => 
-      new Array(N).fill(null).map((_, j) =>
-        new Dot(p5, i, j, p5.width, p5.height)
-      )
-    );
-
-    setArray(arr);
-  };
-
-  const draw = (p5) => {
+  const draw = (p5: p5) => {
     p5.background(BACKGROUND_COLOR);
 
     array.forEach(column => column.forEach(dot => dot.update(p5, p5.mouseX, p5.mouseY, p5.mouseIsPressed)));
@@ -108,19 +132,23 @@ const SpringyGrid: VFC = () => {
     }
   };
 
-  const drawConnection = (d1, d2, p5) => {
+  const drawConnection = (d1: Dot, d2: Dot, p5: p5) => {
     p5.stroke(LINE_COLOR + LINE_OPACITY.toString(16)); // Combine color and opacity
     p5.strokeWeight(LINE_WEIGHT);
     p5.line(d1.x, d1.y, d2.x, d2.y);
   };
 
-  const windowResized = (p5) => {
+  const windowResized = (p5: p5) => {
     p5.resizeCanvas(p5.windowWidth, p5.windowHeight);
   
+    // Map the i and j indices to x and y positions
     const newArray = new Array(N).fill(null).map((_, i) =>
-      new Array(N).fill(null).map((_, j) =>
-        new Dot(p5, i, j, p5.windowWidth, p5.windowHeight)
-      )
+      new Array(N).fill(null).map((_, j) => {
+        // Calculate the new x and y positions
+        const x = p5.map(i, 0, N-1, SP, p5.windowWidth - SP);
+        const y = p5.map(j, 0, N-1, SP, p5.windowHeight - SP);
+        return new Dot(x, y); // Call the constructor with the right number of arguments
+      })
     );
   
     setArray(newArray);
