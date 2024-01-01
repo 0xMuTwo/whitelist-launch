@@ -12,7 +12,12 @@ interface DotProps {
     vy: number;
   }
 
-  
+interface Square {
+  startX: number;
+  startY: number;
+  endX: number;
+  endY: number;
+};
 
 // Next.js does not support SSR for packages that require window, so dynamic import is used to disable SSR.
 const Sketch = dynamic(() => import('react-p5'), {
@@ -90,7 +95,7 @@ const springForce = (ax: number, ay: number, bx: number, by: number, k: number, 
   return p5.createVector(f * nx, f * ny);
 };
 
-const SpringyGrid: VFC = () => {
+const SpringyGrid: VFC<{ onSquareComplete?: (square: Square) => void }> = ({ onSquareComplete }) => {
     const [array, setArray] = useState<Dot[][]>([]);
   
     const setup = (p5: p5, canvasParentRef: Element) => {
@@ -106,6 +111,27 @@ const SpringyGrid: VFC = () => {
   
       setArray(arr);
     };
+
+  const [drawingSquare, setDrawingSquare] = useState<Square | null>(null);
+  const mousePressed = (p5: p5) => {
+    // When the mouse is pressed, start tracking the square
+    setDrawingSquare({ startX: p5.mouseX, startY: p5.mouseY, endX: p5.mouseX, endY: p5.mouseY });
+  };
+
+  const mouseDragged = (p5: p5) => {
+    // Update the end coordinates of the square as the mouse moves
+    setDrawingSquare(prev => prev && { ...prev, endX: p5.mouseX, endY: p5.mouseY });
+  };
+
+  const mouseReleased = (p5: p5) => {
+    // When the mouse is released, we finalize the square
+    if (drawingSquare) {
+      if (onSquareComplete) {
+        onSquareComplete(drawingSquare);
+      }
+      setDrawingSquare(null); // Stop drawing the square
+    }
+  };
 
   const draw = (p5: p5) => {
     p5.background(BACKGROUND_COLOR);
@@ -130,6 +156,14 @@ const SpringyGrid: VFC = () => {
       drawConnection(d1, d2, p5);
       drawConnection(d3, d4, p5);
     }
+    if (drawingSquare) {
+      const { startX, startY, endX, endY } = drawingSquare;
+      p5.stroke('rgba(255,255,255,0.5)');
+      p5.strokeWeight(1);
+      p5.noFill();
+      p5.rect(startX, startY, endX - startX, endY - startY);
+    }
+
   };
 
   const drawConnection = (d1: Dot, d2: Dot, p5: p5) => {
@@ -159,6 +193,9 @@ const SpringyGrid: VFC = () => {
       <Sketch
         setup={setup}
         draw={draw}
+        mousePressed={mousePressed}
+        mouseDragged={mouseDragged}
+        mouseReleased={mouseReleased}
         windowResized={windowResized}
         className="w-full h-full"
       />
