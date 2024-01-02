@@ -41,7 +41,7 @@ export default function Home() {
   
     console.log('Path:', path);
   
-    financeDivRef.current.style.border = enclosesDiv ? '2px solid green' : '2px solid red';
+    // financeDivRef.current.style.border = enclosesDiv ? '2px solid green' : '2px solid red';
     setShowButton(enclosesDiv);
   };
   
