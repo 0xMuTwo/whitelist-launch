@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import Image from 'next/image';
 import SpringyGrid from '../../components/SpringyGrid'; // Ensure the path to this component is correct.
 import "../app/globals.css"
+import { PathPoint } from '../../components/SpringyGrid';
 
 export default function Home() {
   const [showButton, setShowButton] = useState(false);

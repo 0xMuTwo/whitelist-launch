@@ -19,7 +19,7 @@ interface Square {
   endY: number;
 };
 
-interface PathPoint { x: number; y: number; }
+export type PathPoint = { x: number; y: number; }
 
 // Next.js does not support SSR for packages that require window, so dynamic import is used to disable SSR.
 const Sketch = dynamic(() => import('react-p5'), {
