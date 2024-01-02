@@ -50,7 +50,6 @@ export default function Home() {
     <div className="relative min-h-screen bg-black overflow-hidden">
       <SpringyGrid onSquareComplete={handleSquareComplete} />
       <div  className="absolute inset-0 flex flex-col items-center justify-center z-10 p-4 text-center text-white">
-        {/* Instructional Text */}
         <div ref={financeDivRef} className="mt-4">
           <p className="text-lg font-bold">
             Read the Blog to Gain Access
