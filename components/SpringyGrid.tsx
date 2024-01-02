@@ -12,7 +12,14 @@ interface DotProps {
     vy: number;
   }
 
-  
+interface Square {
+  startX: number;
+  startY: number;
+  endX: number;
+  endY: number;
+};
+
+interface PathPoint { x: number; y: number; }
 
 // Next.js does not support SSR for packages that require window, so dynamic import is used to disable SSR.
 const Sketch = dynamic(() => import('react-p5'), {
@@ -90,7 +97,8 @@ const springForce = (ax: number, ay: number, bx: number, by: number, k: number, 
   return p5.createVector(f * nx, f * ny);
 };
 
-const SpringyGrid: VFC = () => {
+const SpringyGrid: VFC<{ onSquareComplete?: (path: PathPoint[]) => void }> = ({ onSquareComplete }) => {
+
     const [array, setArray] = useState<Dot[][]>([]);
   
     const setup = (p5: p5, canvasParentRef: Element) => {
@@ -106,6 +114,31 @@ const SpringyGrid: VFC = () => {
   
       setArray(arr);
     };
+
+  const [drawingPath, setDrawingPath] = useState<PathPoint[]>([]);
+  const mousePressed = (p5: p5) => {
+    setDrawingPath([{ x: p5.mouseX, y: p5.mouseY }]); // Start with the initial point
+  };
+
+  const mouseDragged = (p5: p5) => {
+    setDrawingPath(prev => [...prev, { x: p5.mouseX, y: p5.mouseY }]); // Add points to path
+  };
+
+  const CLOSE_PATH_THRESHOLD = 30; // pixels
+
+  const mouseReleased = (p5: p5) => {
+    if (drawingPath.length) {
+      const startPoint = drawingPath[0];
+      const endPoint = drawingPath[drawingPath.length - 1];
+      const isPathClosed = p5.dist(startPoint.x, startPoint.y, endPoint.x, endPoint.y) < CLOSE_PATH_THRESHOLD;
+      
+      if (isPathClosed && onSquareComplete) {
+        onSquareComplete(drawingPath);
+      }
+      setDrawingPath([]); // Clear path
+    }
+  };
+  
 
   const draw = (p5: p5) => {
     p5.background(BACKGROUND_COLOR);
@@ -130,6 +163,8 @@ const SpringyGrid: VFC = () => {
       drawConnection(d1, d2, p5);
       drawConnection(d3, d4, p5);
     }
+
+
   };
 
   const drawConnection = (d1: Dot, d2: Dot, p5: p5) => {
@@ -159,6 +194,9 @@ const SpringyGrid: VFC = () => {
       <Sketch
         setup={setup}
         draw={draw}
+        mousePressed={mousePressed}
+        mouseDragged={mouseDragged}
+        mouseReleased={mouseReleased}
         windowResized={windowResized}
         className="w-full h-full"
       />
