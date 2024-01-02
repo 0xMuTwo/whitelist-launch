@@ -53,20 +53,18 @@ export default function Home() {
         {/* Instructional Text */}
         <div ref={financeDivRef} className="mt-4">
           <p className="text-lg font-bold">
-            Draw A Square to Gain Access
+            Read the Blog to Gain Access
           </p>
           <p className="text-opacity-70">
             Enter <code className="font-mono">Glove Finance</code> today.
           </p>
+          {showButton && (
+            <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2">
+              <button className="bg-white text-black p-2 rounded">Enter Glove Finance</button>
+            </div>
+          )}
         </div>
       </div>
-      
-      {/* Enter Glove Finance Button */}
-      {showButton && (
-        <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2">
-          <button className="bg-white text-black p-2 rounded">Enter Glove Finance</button>
-        </div>
-      )}
     </div>
   );
 }
