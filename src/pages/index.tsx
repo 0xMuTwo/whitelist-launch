@@ -54,13 +54,16 @@ export default function Home() {
       <SpringyGrid onSquareComplete={handleSquareComplete} />
       <div  className="absolute inset-0 flex flex-col items-center justify-center z-10 p-4 text-center text-white">
         <div ref={financeDivRef} className="mt-4">
-          <p className="text-lg font-bold">
-            Read the Blog to Gain Access
-          </p>
-          <p className="text-opacity-70">
-            <code className="font-mono">We hope to see you soon.</code>
-          </p>
-          <CountdownTimer targetDate={targetDate} />
+          <div className="no-highlight">
+            <p className="text-lg font-bold ">
+              Read the Blog to Gain Access
+            </p>
+            <p className="text-opacity-70 ">
+              <code className="font-mono">We hope to see you soon.</code>
+            </p>
+          <CountdownTimer targetDate={targetDate}/>
+          </div>
+
           {showButton && (
             <div className="absolute bottom-12 left-1/2 transform -translate-x-1/2">
               <button className="bg-white text-black p-2 rounded" onClick={enterGloveButton}>Enter Glove Finance</button>
