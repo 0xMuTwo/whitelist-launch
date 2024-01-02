@@ -124,7 +124,7 @@ const SpringyGrid: VFC<{ onSquareComplete?: (path: PathPoint[]) => void }> = ({ 
     setDrawingPath(prev => [...prev, { x: p5.mouseX, y: p5.mouseY }]); // Add points to path
   };
 
-  const CLOSE_PATH_THRESHOLD = 30; // pixels
+  const CLOSE_PATH_THRESHOLD = 150; // pixels
 
   const mouseReleased = (p5: p5) => {
     if (drawingPath.length) {
