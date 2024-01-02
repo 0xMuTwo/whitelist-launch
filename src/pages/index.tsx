@@ -7,26 +7,43 @@ export default function Home() {
   const [showButton, setShowButton] = useState(false);
   const financeDivRef = useRef<HTMLDivElement>(null);
 
-  const handleSquareComplete = (square) => {
+  const handleSquareComplete = (path: PathPoint[]) => {
     if (!financeDivRef.current) return;
+  
     const divRect = financeDivRef.current.getBoundingClientRect();
     console.log('Div Rect:', divRect);
-    const squareBounds = {
-      left: Math.min(square.startX, square.endX),
-      top: Math.min(square.startY, square.endY),
-      right: Math.max(square.startX, square.endX),
-      bottom: Math.max(square.startY, square.endY),
+  
+    // Check if a specific point is inside the user-drawn closed path
+    const isPointInsidePath = (point: { x: number; y: number }): boolean => {
+      let isInside = false;
+      for (let i = 0, j = path.length - 1; i < path.length; j = i++) {
+        const xi = path[i].x, yi = path[i].y;
+        const xj = path[j].x, yj = path[j].y;
+  
+        const intersect = ((yi > point.y) != (yj > point.y)) &&
+          (point.x < (xj - xi) * (point.y - yi) / (yj - yi) + xi);
+        if (intersect) isInside = !isInside;
+      }
+      return isInside;
     };
-    const enclosesDiv = (
-      squareBounds.left <= divRect.left &&
-      squareBounds.top <= divRect.top &&
-      squareBounds.right >= divRect.right &&
-      squareBounds.bottom >= divRect.bottom
-    );
-    console.log('Square:', square);
+  
+    // We need to check all 4 corners of the div
+    const corners = [
+      { x: divRect.left, y: divRect.top },
+      { x: divRect.right, y: divRect.top },
+      { x: divRect.right, y: divRect.bottom },
+      { x: divRect.left, y: divRect.bottom },
+    ];
+  
+    // Adding a heuristic check to ensure all corners of the div are within the closed path
+    const enclosesDiv = corners.every(corner => isPointInsidePath(corner));
+  
+    console.log('Path:', path);
+  
     financeDivRef.current.style.border = enclosesDiv ? '2px solid green' : '2px solid red';
     setShowButton(enclosesDiv);
   };
+  
 
   return (
     <div className="relative min-h-screen bg-black overflow-hidden">
