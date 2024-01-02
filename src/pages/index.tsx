@@ -1,5 +1,6 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, MouseEvent } from 'react';
 import Image from 'next/image';
+import CountdownTimer from '../../components/CountdownTimer';
 import SpringyGrid from '../../components/SpringyGrid'; // Ensure the path to this component is correct.
 import "../app/globals.css"
 import { PathPoint } from '../../components/SpringyGrid';
@@ -7,12 +8,17 @@ import { PathPoint } from '../../components/SpringyGrid';
 export default function Home() {
   const [showButton, setShowButton] = useState(false);
   const financeDivRef = useRef<HTMLDivElement>(null);
+  const targetDate = new Date('2024-01-03T00:00:00');
+
+  const enterGloveButton = (event: MouseEvent<HTMLButtonElement>) => {
+    console.log('Glove Finance button clicked');
+  };
 
   const handleSquareComplete = (path: PathPoint[]) => {
+    if (showButton) return;
     if (!financeDivRef.current) return;
   
     const divRect = financeDivRef.current.getBoundingClientRect();
-    console.log('Div Rect:', divRect);
   
     // Check if a specific point is inside the user-drawn closed path
     const isPointInsidePath = (point: { x: number; y: number }): boolean => {
@@ -39,9 +45,6 @@ export default function Home() {
     // Adding a heuristic check to ensure all corners of the div are within the closed path
     const enclosesDiv = corners.every(corner => isPointInsidePath(corner));
   
-    console.log('Path:', path);
-  
-    financeDivRef.current.style.border = enclosesDiv ? '2px solid green' : '2px solid red';
     setShowButton(enclosesDiv);
   };
   
@@ -51,15 +54,19 @@ export default function Home() {
       <SpringyGrid onSquareComplete={handleSquareComplete} />
       <div  className="absolute inset-0 flex flex-col items-center justify-center z-10 p-4 text-center text-white">
         <div ref={financeDivRef} className="mt-4">
-          <p className="text-lg font-bold">
-            Read the Blog to Gain Access
-          </p>
-          <p className="text-opacity-70">
-            Enter <code className="font-mono">Glove Finance</code> today.
-          </p>
+          <div className="no-highlight">
+            <p className="text-lg font-bold ">
+              Read the Blog to Gain Access
+            </p>
+            <p className="text-opacity-70 ">
+              <code className="font-mono">We hope to see you soon.</code>
+            </p>
+          <CountdownTimer targetDate={targetDate}/>
+          </div>
+
           {showButton && (
-            <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2">
-              <button className="bg-white text-black p-2 rounded">Enter Glove Finance</button>
+            <div className="absolute bottom-12 left-1/2 transform -translate-x-1/2">
+              <button className="bg-white text-black p-2 rounded" onClick={enterGloveButton}>Enter Glove Finance</button>
             </div>
           )}
         </div>
