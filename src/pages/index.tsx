@@ -10,7 +10,7 @@ export default function Home() {
   const [collapse, setCollapse] = useState(false);
   const [solAddressShown, setSolAddressShown] = useState(false);
   const financeDivRef = useRef<HTMLDivElement>(null);
-  const targetDate = new Date(Date.UTC(2024, 0, 7, 12, 0, 0));
+  const targetDate = new Date(Date.UTC(2024, 0, 8, 0, 0, 0));
   const solAddress = "GLoVEXsnctnVLgLCy7r2v54QPPGdcEwf7qu62VdPo6LQ";
 
   const handleShowPresaleAddress = (event: MouseEvent<HTMLButtonElement>) => {
