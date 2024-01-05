@@ -6,8 +6,7 @@
   /* Collapse animation class, triggers the collapse of the .container */
   .collapse {
     animation: collapse 1s forwards;
-    /* You can remove pointer-events or set it to none based on the interaction you want */
-    pointer-events: auto; 
+    pointer-events: auto;
   }
   
   /* Keyframes for the collapsing animation */
@@ -22,25 +21,41 @@
     }
   }
   
-  /* Container for the shining Ethereum address text */
+  /* Container for the shining Solana address text */
   .shiningTextContainer {
     animation: fadeIn 1s forwards;
     opacity: 0; /* Start hidden */
     z-index: 20; /* Appears above the collapsed div */
   }
   
-  /* Keyframes for the fading in animation for the Ethereum address */
+  /* Keyframes for the fading in animation for the Solana address */
   @keyframes fadeIn {
     to {
       opacity: 1;
     }
   }
   
-  /* Styling for the shining Ethereum address text */
-  .shiningText {
+/* Styling for the shining SOL address text */
+.shiningText {
     font-size: 2rem;
     color: white;
-    /* Ensure there's no duplicate animation, the shine animation is already defined below */
+    text-align: center;
+    padding: 0 20px; /* Add padding to prevent text from touching the edges */
+    overflow-wrap: break-word; /* Allows unbreakable words to be broken */
+    word-break: break-word; /* Break the text in case of a long unbroken string */
+    white-space: pre-wrap; /* Wrap the text and preserve whitespace and line breaks */
+    display: block; /* Ensures we can apply padding and word wrapping */
+    max-width: 90%; /* Maximum width to ensure padding inside the viewport */
+    margin: 0 auto; /* Center the text block */
+    animation: shine 2s infinite alternate; /* Applying the shine animation */
+  }
+  
+  /* Media query for smaller screens to reduce font size and padding */
+  @media (max-width: 600px) {
+    .shiningText {
+      font-size: 1.5rem;
+      padding: 0 10px;
+    }
   }
   
   /* Keyframes for the shining text animation */
