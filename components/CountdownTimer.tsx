@@ -1,70 +1,52 @@
 import React, { useEffect, useState, FC, useCallback } from 'react';
 
-type TimeLeft = {
-  days?: number;
-  hours?: number;
-  minutes?: number;
-  seconds?: number;
-};
+interface TimeLeft {
+  days: number;
+  hours: number;
+  minutes: number;
+  seconds: number;
+}
 
-type CountdownTimerProps = {
+interface CountdownTimerProps {
   targetDate: Date;
-};
+}
 
 const CountdownTimer: FC<CountdownTimerProps> = ({ targetDate }) => {
   const calculateTimeLeft = useCallback((): TimeLeft => {
-    // Convert both current date and the target date to UTC
     const nowUTC = Date.now();
-    const targetUTC = Date.UTC(
-      targetDate.getUTCFullYear(),
-      targetDate.getUTCMonth(),
-      targetDate.getUTCDate(),
-      targetDate.getUTCHours(),
-      targetDate.getUTCMinutes(),
-      targetDate.getUTCSeconds()
-    );
-    
+    const targetUTC = targetDate.getTime();
+
     const difference = targetUTC - nowUTC;
-    let timeLeft: TimeLeft = {};
 
-    if (difference > 0) {
-      timeLeft = {
-        days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-        hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-        minutes: Math.floor((difference / 1000 / 60) % 60),
-        seconds: Math.floor((difference / 1000) % 60),
-      };
-    }
-
-    return timeLeft;
+    return {
+      days: Math.max(0, Math.floor(difference / (1000 * 60 * 60 * 24))),
+      hours: Math.max(0, Math.floor((difference / (1000 * 60 * 60)) % 24)),
+      minutes: Math.max(0, Math.floor((difference / 1000 / 60) % 60)),
+      seconds: Math.max(0, Math.floor((difference / 1000) % 60)),
+    };
   }, [targetDate]);
 
   const [timeLeft, setTimeLeft] = useState<TimeLeft>(calculateTimeLeft());
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft(calculateTimeLeft());
-    }, 1000);
-
+    const timer = setInterval(() => setTimeLeft(calculateTimeLeft()), 1000);
     return () => clearInterval(timer);
   }, [calculateTimeLeft]);
 
-  const timerComponents = (Object.keys(timeLeft) as Array<keyof TimeLeft>).reduce((components, interval) => {
-    const value = timeLeft[interval];
-    if (value !== undefined) {
-      return [
-        ...components,
-        <span key={interval}>
-          {value} {interval.toUpperCase()}{" "}
-        </span>,
-      ];
-    }
-    return components;
-  }, [] as JSX.Element[]);
+  const { days, hours, minutes, seconds } = timeLeft;
 
   return (
     <div>
-      {timerComponents.length ? timerComponents : <span>Time&apos;s up!</span>}
+      {days || hours || minutes || seconds ? (
+        <>
+          {days} {days === 1 ? 'DAY' : 'DAYS'}{' '}
+          {hours} {hours === 1 ? 'HOUR' : 'HOURS'}{' '}
+          {minutes} {minutes === 1 ? 'MINUTE' : 'MINUTES'}{' '}
+          {seconds} {seconds === 1 ? 'SECOND' : 'SECONDS'}
+        </>
+      ) : (
+        <span>Time&apos;s up!</span>
+      )}
     </div>
   );
 };

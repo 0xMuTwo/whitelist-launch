@@ -8,10 +8,10 @@ import { PathPoint } from '../../components/SpringyGrid';
 export default function Home() {
   const [showButton, setShowButton] = useState(false);
   const financeDivRef = useRef<HTMLDivElement>(null);
-  const targetDate = new Date(Date.UTC(2024, 0, 7, 0, 0, 0));
+  const targetDate = new Date(Date.UTC(2024, 0, 7, 12, 0, 0));
 
 
-  const enterGloveButton = (event: MouseEvent<HTMLButtonElement>) => {
+  const showPresaleButton = (event: MouseEvent<HTMLButtonElement>) => {
     console.log('Glove Finance button clicked');
   };
 
@@ -67,7 +67,7 @@ export default function Home() {
 
           {showButton && (
             <div className="absolute bottom-12 left-1/2 transform -translate-x-1/2">
-              <button className="bg-white text-black p-2 rounded" onClick={enterGloveButton}>Enter Glove Finance</button>
+              <button className="bg-white text-black p-2 rounded" onClick={showPresaleButton}>Show Pre-Sale Address</button>
             </div>
           )}
         </div>
