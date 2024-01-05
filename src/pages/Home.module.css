@@ -1,0 +1,69 @@
+/* Container that wraps your SpringyGrid and countdown, not affected by the collapse */
+.container {
+    transition: opacity 1s, transform 1s;
+  }
+  
+  /* Collapse animation class, triggers the collapse of the .container */
+  .collapse {
+    animation: collapse 1s forwards;
+    pointer-events: auto;
+  }
+  
+  /* Keyframes for the collapsing animation */
+  @keyframes collapse {
+    from {
+      opacity: 1;
+      transform: scale(1);
+    }
+    to {
+      opacity: 0;
+      transform: scale(0);
+    }
+  }
+  
+  /* Container for the shining Solana address text */
+  .shiningTextContainer {
+    animation: fadeIn 1s forwards;
+    opacity: 0; /* Start hidden */
+    z-index: 20; /* Appears above the collapsed div */
+  }
+  
+  /* Keyframes for the fading in animation for the Solana address */
+  @keyframes fadeIn {
+    to {
+      opacity: 1;
+    }
+  }
+  
+/* Styling for the shining SOL address text */
+.shiningText {
+    font-size: 2rem;
+    color: white;
+    text-align: center;
+    padding: 0 20px; /* Add padding to prevent text from touching the edges */
+    overflow-wrap: break-word; /* Allows unbreakable words to be broken */
+    word-break: break-word; /* Break the text in case of a long unbroken string */
+    white-space: pre-wrap; /* Wrap the text and preserve whitespace and line breaks */
+    display: block; /* Ensures we can apply padding and word wrapping */
+    max-width: 90%; /* Maximum width to ensure padding inside the viewport */
+    margin: 0 auto; /* Center the text block */
+    animation: shine 2s infinite alternate; /* Applying the shine animation */
+  }
+  
+  /* Media query for smaller screens to reduce font size and padding */
+  @media (max-width: 600px) {
+    .shiningText {
+      font-size: 1.5rem;
+      padding: 0 10px;
+    }
+  }
+  
+  /* Keyframes for the shining text animation */
+  @keyframes shine {
+    from {
+      text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff, 0 0 40px #00ffaa, 0 0 70px #00ffaa, 0 0 80px #00ffaa, 0 0 100px #00ffaa, 0 0 150px #00ffaa;
+    }
+    to {
+      text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #fff, 0 0 20px #00ffaa, 0 0 35px #00ffaa, 0 0 40px #00ffaa, 0 0 50px #00ffaa, 0 0 75px #00ffaa;
+    }
+  }
