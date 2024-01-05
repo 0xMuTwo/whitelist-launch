@@ -1,4 +1,4 @@
-import { useEffect, useState, FC, useCallback } from 'react';
+import React, { useEffect, useState, FC, useCallback } from 'react';
 
 type TimeLeft = {
   days?: number;
@@ -13,7 +13,18 @@ type CountdownTimerProps = {
 
 const CountdownTimer: FC<CountdownTimerProps> = ({ targetDate }) => {
   const calculateTimeLeft = useCallback((): TimeLeft => {
-    const difference = +targetDate - +new Date();
+    // Convert both current date and the target date to UTC
+    const nowUTC = Date.now();
+    const targetUTC = Date.UTC(
+      targetDate.getUTCFullYear(),
+      targetDate.getUTCMonth(),
+      targetDate.getUTCDate(),
+      targetDate.getUTCHours(),
+      targetDate.getUTCMinutes(),
+      targetDate.getUTCSeconds()
+    );
+    
+    const difference = targetUTC - nowUTC;
     let timeLeft: TimeLeft = {};
 
     if (difference > 0) {
@@ -31,11 +42,11 @@ const CountdownTimer: FC<CountdownTimerProps> = ({ targetDate }) => {
   const [timeLeft, setTimeLeft] = useState<TimeLeft>(calculateTimeLeft());
 
   useEffect(() => {
-    const timer = setTimeout(() => {
+    const timer = setInterval(() => {
       setTimeLeft(calculateTimeLeft());
     }, 1000);
 
-    return () => clearTimeout(timer);
+    return () => clearInterval(timer);
   }, [calculateTimeLeft]);
 
   const timerComponents = (Object.keys(timeLeft) as Array<keyof TimeLeft>).reduce((components, interval) => {
@@ -44,7 +55,7 @@ const CountdownTimer: FC<CountdownTimerProps> = ({ targetDate }) => {
       return [
         ...components,
         <span key={interval}>
-          {value} {interval}{" "}
+          {value} {interval.toUpperCase()}{" "}
         </span>,
       ];
     }

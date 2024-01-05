@@ -8,7 +8,8 @@ import { PathPoint } from '../../components/SpringyGrid';
 export default function Home() {
   const [showButton, setShowButton] = useState(false);
   const financeDivRef = useRef<HTMLDivElement>(null);
-  const targetDate = new Date('2024-01-03T00:00:00');
+  const targetDate = new Date(Date.UTC(2024, 0, 7, 0, 0, 0));
+
 
   const enterGloveButton = (event: MouseEvent<HTMLButtonElement>) => {
     console.log('Glove Finance button clicked');
