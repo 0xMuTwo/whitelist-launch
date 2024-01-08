@@ -52,7 +52,7 @@ export default function Home() {
     // Adding a heuristic check to ensure all corners of the div are within the closed path
     const enclosesDiv = corners.every(corner => isPointInsidePath(corner));
   
-    setShowButton(enclosesDiv);
+    // setShowButton(enclosesDiv); commenting out so button doesn't work
   };
   
 
@@ -66,10 +66,13 @@ export default function Home() {
               <div ref={financeDivRef} className="mt-4">
                 <div className="no-highlight">
                   <p className="text-lg font-bold ">
-                    Read the Blog to Gain Access
+                    The Pre-Sale is Over
                   </p>
                   <p className="text-opacity-70 ">
-                    <code className="font-mono">We hope to see you soon.</code>
+                    <code className="font-mono">Check the discord for updates.</code>
+                  </p>
+                  <p className="text-opacity-70 ">
+                    <code className="font-mono">Thank you for participating.</code>
                   </p>
                   <CountdownTimer targetDate={targetDate} />
                 </div>
